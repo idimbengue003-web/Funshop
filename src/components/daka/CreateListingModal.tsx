@@ -75,7 +75,7 @@ export function CreateListingModal() {
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">Publier une annonce</DialogTitle>
-          <DialogDescription>Ajoutez votre produit sur DakaMarket</DialogDescription>
+          <DialogDescription>Ajoutez votre produit sur FUNSHOP</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <div className="space-y-2">

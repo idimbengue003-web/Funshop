@@ -45,7 +45,7 @@ export function PremiumModal() {
         <DialogHeader>
           <DialogTitle className="text-2xl font-extrabold text-center flex items-center justify-center gap-2">
             <Crown className="w-6 h-6 text-amber-500" />
-            DakaMarket Premium
+            FUNSHOP Premium
           </DialogTitle>
           <DialogDescription className="text-center">
             Boostez vos ventes et gagnez en visibilité

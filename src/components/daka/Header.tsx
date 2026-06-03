@@ -43,7 +43,7 @@ export function Header() {
           </div>
           <div className="hidden sm:block">
             <span className="text-lg font-extrabold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-              DakaMarket
+              FUNSHOP
             </span>
           </div>
         </button>

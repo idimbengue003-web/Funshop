@@ -51,7 +51,7 @@ export function ListingDetailModal() {
       const res = await fetch('/api/purchases', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ listingId: listing.id, buyerPhone: 'Client DakaMarket' })
+        body: JSON.stringify({ listingId: listing.id, buyerPhone: 'Client FUNSHOP' })
       })
       if (res.ok) {
         setPhoneRevealed(true)

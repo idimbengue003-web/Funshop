@@ -5,6 +5,7 @@ db/
 .env.local
 .env.production.local
 *.db
+*.db-journal
 dev.log
 server.log
 .tgz
@@ -13,7 +14,5 @@ mini-services/
 skills/
 upload/
 download/
-prisma/schema.sqlite.prisma
-prisma/schema.sqlite.bak
 agent-ctx/
 worklog.md

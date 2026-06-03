@@ -78,7 +78,7 @@ export default function Home() {
           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center mx-auto mb-4 animate-pulse">
             <span className="text-2xl">🛒</span>
           </div>
-          <p className="text-muted-foreground">Chargement de DakaMarket...</p>
+          <p className="text-muted-foreground">Chargement de FUNSHOP...</p>
         </div>
       </div>
     )
@@ -91,7 +91,7 @@ export default function Home() {
           <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-orange-500/20">
             <span className="text-4xl">🛒</span>
           </div>
-          <h1 className="text-2xl font-extrabold mb-2">Bienvenue sur DakaMarket</h1>
+          <h1 className="text-2xl font-extrabold mb-2">Bienvenue sur FUNSHOP</h1>
           <p className="text-muted-foreground mb-6">
             La marketplace alimentaire de Dakar. Comparez les prix entre vendeurs de tous les quartiers.
           </p>
@@ -130,7 +130,7 @@ export default function Home() {
 
       <footer className="border-t bg-muted/30 mt-auto">
         <div className="max-w-7xl mx-auto px-4 py-4 text-center text-xs text-muted-foreground">
-          DakaMarket — La marketplace alimentaire de Dakar &copy; 2025
+          FUNSHOP — La marketplace alimentaire de Dakar &copy; 2025
         </div>
       </footer>
 
