@@ -3,7 +3,7 @@ builder = "nixpacks"
 buildCommand = "cp prisma/schema.postgresql.prisma prisma/schema.prisma && prisma generate && next build"
 
 [deploy]
-startCommand = "npx prisma migrate deploy && next start -p ${PORT:-3000}"
+startCommand = "cp prisma/schema.postgresql.prisma prisma/schema.prisma && npx prisma migrate deploy && next start -p ${PORT:-3000}"
 healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
