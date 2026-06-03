@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     const where: Record<string, unknown> = { available: true }
 
     if (categorySlug) {
-      const category = await db.category.findUnique({ where: { slug: categorySlug } })
+      const category = await db.category.findFirst({ where: { slug: categorySlug } })
       if (category) where.categoryId = category.id
     }
 
@@ -29,15 +29,28 @@ export async function GET(request: Request) {
       sort === 'price_desc' ? { price: 'desc' } :
       { createdAt: 'desc' }
 
-    const listings = await db.listing.findMany({
-      where,
+    // Get premium listings first
+    const premiumListings = await db.listing.findMany({
+      where: { ...where, isPremium: true },
       include: {
-        seller: { select: { id: true, name: true, quartier: true, avatar: true, rating: true, sales: true } },
+        seller: { select: { id: true, name: true, phone: true, quartier: true, avatar: true, rating: true, sales: true, premium: true } },
         category: { select: { id: true, name: true, slug: true, icon: true, color: true } }
       },
       orderBy,
-      take: 100
+      take: 20
     })
+
+    const regularListings = await db.listing.findMany({
+      where: { ...where, isPremium: false },
+      include: {
+        seller: { select: { id: true, name: true, phone: true, quartier: true, avatar: true, rating: true, sales: true, premium: true } },
+        category: { select: { id: true, name: true, slug: true, icon: true, color: true } }
+      },
+      orderBy,
+      take: 80
+    })
+
+    const listings = [...premiumListings, ...regularListings]
 
     // Get price stats for the current filters
     const priceStats = await db.listing.aggregate({
@@ -68,7 +81,8 @@ export async function GET(request: Request) {
       },
       quartiers: quartierBreakdown
     })
-  } catch {
+  } catch (error) {
+    console.error('Listings error:', error)
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
   }
 }

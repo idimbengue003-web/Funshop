@@ -13,7 +13,7 @@ export async function GET(request: Request) {
           listings: {
             where: { available: true },
             include: { category: true },
-            orderBy: { createdAt: 'desc' }
+            orderBy: [{ isPremium: 'desc' }, { createdAt: 'desc' }]
           }
         }
       })
@@ -26,14 +26,18 @@ export async function GET(request: Request) {
 
     const sellers = await db.seller.findMany({
       select: {
-        id: true, name: true, quartier: true, avatar: true, rating: true, sales: true,
+        id: true, name: true, quartier: true, avatar: true, rating: true, sales: true, premium: true,
         _count: { select: { listings: { where: { available: true } } } }
       },
-      orderBy: { sales: 'desc' }
+      orderBy: [
+        { premium: 'desc' },
+        { sales: 'desc' }
+      ]
     })
 
     return NextResponse.json(sellers)
-  } catch {
+  } catch (error) {
+    console.error('Sellers error:', error)
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
   }
 }

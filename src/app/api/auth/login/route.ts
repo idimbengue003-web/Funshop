@@ -22,7 +22,9 @@ export async function POST(request: Request) {
       quartier: seller.quartier,
       avatar: seller.avatar,
       rating: seller.rating,
-      sales: seller.sales
+      sales: seller.sales,
+      premium: seller.premium,
+      premiumExpiry: seller.premiumExpiry
     })
 
     response.cookies.set('seller_id', seller.id, {

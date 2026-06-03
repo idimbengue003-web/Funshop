@@ -8,17 +8,20 @@ datasource db {
 }
 
 model Seller {
-  id        String   @id @default(cuid())
-  name      String
-  phone     String   @unique
-  password  String
-  quartier  String
-  avatar    String?
-  rating    Float    @default(0)
-  sales     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  listings  Listing[]
+  id          String     @id @default(cuid())
+  name        String
+  phone       String     @unique
+  password    String
+  quartier    String
+  avatar      String?
+  rating      Float      @default(0)
+  sales       Int        @default(0)
+  premium     String     @default("none") // none, basic (1000), pro (5000)
+  premiumExpiry DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  listings    Listing[]
+  purchases   Purchase[]
 }
 
 model Category {
@@ -38,11 +41,26 @@ model Listing {
   unit        String
   imageUrl    String?
   available   Boolean  @default(true)
+  isPremium   Boolean  @default(false)
   categoryId  String
   sellerId    String
   quartier    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   category    Category @relation(fields: [categoryId], references: [id])
+  seller      Seller   @relation(fields: [sellerId], references: [id])
+  purchases   Purchase[]
+}
+
+model Purchase {
+  id          String   @id @default(cuid())
+  buyerPhone  String
+  listingId   String
+  sellerId    String
+  price       Int
+  title       String
+  quartier    String
+  createdAt   DateTime @default(now())
+  listing     Listing  @relation(fields: [listingId], references: [id])
   seller      Seller   @relation(fields: [sellerId], references: [id])
 }

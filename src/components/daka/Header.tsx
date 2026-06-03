@@ -7,12 +7,15 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 import { useDakaStore } from '@/lib/store'
-import { Search, Store, LogOut, Plus, Menu, X, ShoppingCart, MapPin, User } from 'lucide-react'
+import { getPremiumLabel } from '@/lib/constants'
+import { Search, Store, LogOut, Plus, Menu, X, ShoppingCart, MapPin, User, Settings, ShoppingBag, Crown } from 'lucide-react'
 
 export function Header() {
   const { seller, setSeller, openModal, setViewState, searchQuery, setSearchQuery } = useDakaStore()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchFocused, setSearchFocused] = useState(false)
+
+  const premiumInfo = seller ? getPremiumLabel(seller.premium) : null
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' })
@@ -64,6 +67,17 @@ export function Header() {
         <div className="hidden md:flex items-center gap-2">
           {seller ? (
             <>
+              {seller.premium === 'none' && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 border-amber-200 text-amber-700 hover:bg-amber-50"
+                  onClick={() => openModal({ type: 'premium' })}
+                >
+                  <Crown className="w-4 h-4" />
+                  Premium
+                </Button>
+              )}
               <Button
                 variant="outline"
                 size="sm"
@@ -72,6 +86,14 @@ export function Header() {
               >
                 <Plus className="w-4 h-4" />
                 Publier
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative"
+                onClick={() => openModal({ type: 'recentPurchases' })}
+              >
+                <ShoppingBag className="w-4 h-4" />
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -82,6 +104,14 @@ export function Header() {
                       </AvatarFallback>
                     </Avatar>
                     <span className="text-sm font-medium max-w-[100px] truncate">{seller.name}</span>
+                    {premiumInfo && (
+                      <Badge className="text-[9px] px-1 py-0" style={{
+                        backgroundColor: `${premiumInfo.color}15`,
+                        color: premiumInfo.color
+                      }}>
+                        {premiumInfo.label}
+                      </Badge>
+                    )}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
@@ -96,6 +126,19 @@ export function Header() {
                   <DropdownMenuItem onClick={() => setViewState({ view: 'seller', id: seller.id })}>
                     <User className="w-4 h-4 mr-2" />
                     Mes annonces
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => openModal({ type: 'recentPurchases' })}>
+                    <ShoppingBag className="w-4 h-4 mr-2" />
+                    Achats récents
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => openModal({ type: 'premium' })}>
+                    <Crown className="w-4 h-4 mr-2" />
+                    Premium
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => openModal({ type: 'settings' })}>
+                    <Settings className="w-4 h-4 mr-2" />
+                    Paramètres
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout} className="text-red-600">
@@ -149,7 +192,17 @@ export function Header() {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-semibold text-sm">{seller.name}</p>
+                  <div className="flex items-center gap-1">
+                    <p className="font-semibold text-sm">{seller.name}</p>
+                    {premiumInfo && (
+                      <Badge className="text-[9px] px-1 py-0" style={{
+                        backgroundColor: `${premiumInfo.color}15`,
+                        color: premiumInfo.color
+                      }}>
+                        {premiumInfo.label}
+                      </Badge>
+                    )}
+                  </div>
                   <p className="text-xs text-muted-foreground flex items-center gap-1">
                     <MapPin className="w-3 h-3" />{seller.quartier}
                   </p>
@@ -168,6 +221,27 @@ export function Header() {
                 onClick={() => { setViewState({ view: 'seller', id: seller.id }); setMobileMenuOpen(false) }}
               >
                 <User className="w-4 h-4" /> Mes annonces
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start gap-2"
+                onClick={() => { openModal({ type: 'recentPurchases' }); setMobileMenuOpen(false) }}
+              >
+                <ShoppingBag className="w-4 h-4" /> Achats récents
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start gap-2"
+                onClick={() => { openModal({ type: 'premium' }); setMobileMenuOpen(false) }}
+              >
+                <Crown className="w-4 h-4" /> Premium
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start gap-2"
+                onClick={() => { openModal({ type: 'settings' }); setMobileMenuOpen(false) }}
+              >
+                <Settings className="w-4 h-4" /> Paramètres
               </Button>
               <Button
                 variant="ghost"

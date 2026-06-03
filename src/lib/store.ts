@@ -8,6 +8,8 @@ export type Seller = {
   avatar: string | null
   rating: number
   sales: number
+  premium: string
+  premiumExpiry?: string | null
 }
 
 export type Category = {
@@ -27,10 +29,23 @@ export type Listing = {
   unit: string
   imageUrl: string | null
   available: boolean
+  isPremium: boolean
   quartier: string
   createdAt: string
   category: Category
   seller: Seller
+  purchases?: Purchase[]
+}
+
+export type Purchase = {
+  id: string
+  buyerPhone: string
+  listingId: string
+  sellerId: string
+  price: number
+  title: string
+  quartier: string
+  createdAt: string
 }
 
 export type ListingStats = {
@@ -57,7 +72,10 @@ type ModalState =
   | { type: 'login' }
   | { type: 'register' }
   | { type: 'createListing' }
-  | { type: 'sellerProfile'; sellerId: string }
+  | { type: 'listingDetail'; listingId: string }
+  | { type: 'premium' }
+  | { type: 'settings' }
+  | { type: 'recentPurchases' }
 
 interface DakaStore {
   // Auth
@@ -85,6 +103,9 @@ interface DakaStore {
 
   quartiers: QuartiBreakdown[]
   setQuartiers: (q: QuartiBreakdown[]) => void
+
+  purchases: Purchase[]
+  setPurchases: (p: Purchase[]) => void
 
   // Filters
   selectedQuartier: string | null
@@ -119,6 +140,9 @@ export const useDakaStore = create<DakaStore>((set) => ({
 
   quartiers: [],
   setQuartiers: (quartiers) => set({ quartiers }),
+
+  purchases: [],
+  setPurchases: (purchases) => set({ purchases }),
 
   selectedQuartier: null,
   setSelectedQuartier: (selectedQuartier) => set({ selectedQuartier }),

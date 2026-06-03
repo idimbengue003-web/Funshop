@@ -5,6 +5,10 @@ import { useDakaStore, type Category } from '@/lib/store'
 import { Header } from '@/components/daka/Header'
 import { AuthModals } from '@/components/daka/AuthModals'
 import { CreateListingModal } from '@/components/daka/CreateListingModal'
+import { ListingDetailModal } from '@/components/daka/ListingDetailModal'
+import { PremiumModal } from '@/components/daka/PremiumModal'
+import { SettingsModal } from '@/components/daka/SettingsModal'
+import { RecentPurchasesModal } from '@/components/daka/RecentPurchasesModal'
 import { HomeView } from '@/components/daka/HomeView'
 import { CategoryView } from '@/components/daka/CategoryView'
 import { SellerView } from '@/components/daka/SellerView'
@@ -12,7 +16,7 @@ import { Button } from '@/components/ui/button'
 import { Database, Loader2 } from 'lucide-react'
 
 export default function Home() {
-  const { viewState, categories, setCategories, setSeller, setListings, setStats, setQuartiers } = useDakaStore()
+  const { viewState, categories, setCategories, setSeller } = useDakaStore()
   const [initialized, setInitialized] = useState(false)
   const [seeding, setSeeding] = useState(false)
   const [needsSeed, setNeedsSeed] = useState(false)
@@ -23,7 +27,6 @@ export default function Home() {
 
   const initialize = async () => {
     try {
-      // Load categories
       const catsRes = await fetch('/api/categories')
       const catsData = await catsRes.json()
       setCategories(catsData)
@@ -32,15 +35,14 @@ export default function Home() {
         setNeedsSeed(true)
       }
 
-      // Check if seller is logged in
       try {
         const meRes = await fetch('/api/auth/me')
         if (meRes.ok) {
           const meData = await meRes.json()
-          setSeller(meData)
+          useDakaStore.getState().setSeller(meData)
         }
       } catch {
-        // Not logged in, that's fine
+        // Not logged in
       }
 
       setInitialized(true)
@@ -57,7 +59,6 @@ export default function Home() {
       const data = await res.json()
       console.log('Seed result:', data)
 
-      // Reload categories
       const catsRes = await fetch('/api/categories')
       const catsData = await catsRes.json()
       setCategories(catsData)
@@ -83,7 +84,6 @@ export default function Home() {
     )
   }
 
-  // Seed screen
   if (needsSeed) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-red-50">
@@ -137,6 +137,10 @@ export default function Home() {
       {/* Modals */}
       <AuthModals />
       <CreateListingModal />
+      <ListingDetailModal />
+      <PremiumModal />
+      <SettingsModal />
+      <RecentPurchasesModal />
     </div>
   )
 }
