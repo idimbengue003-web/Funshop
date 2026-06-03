@@ -9,6 +9,8 @@ export async function getCurrentSeller(): Promise<{
   avatar: string | null
   rating: number
   sales: number
+  premium: string
+  premiumExpiry: Date | null
 } | null> {
   const cookieStore = await cookies()
   const sellerId = cookieStore.get('seller_id')?.value
@@ -16,7 +18,7 @@ export async function getCurrentSeller(): Promise<{
 
   const seller = await db.seller.findUnique({
     where: { id: sellerId },
-    select: { id: true, name: true, phone: true, quartier: true, avatar: true, rating: true, sales: true }
+    select: { id: true, name: true, phone: true, quartier: true, avatar: true, rating: true, sales: true, premium: true, premiumExpiry: true }
   })
   return seller
 }
