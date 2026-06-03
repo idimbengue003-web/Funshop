@@ -1,5 +1,6 @@
 [build]
 builder = "nixpacks"
+buildCommand = "cp prisma/schema.postgresql.prisma prisma/schema.prisma && prisma generate && next build"
 
 [deploy]
 startCommand = "npx prisma migrate deploy && next start -p ${PORT:-3000}"
