@@ -100,3 +100,32 @@ html {
 .animate-fade-in {
   animation: fade-in 0.2s ease-out;
 }
+
+/* FunPay-style scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
+/* FunPay-style listing rows */
+.funpay-listing-row:hover {
+  background-color: #fafafa;
+}
+
+/* FunPay-style category card hover */
+.funpay-category-card:hover {
+  border-color: #f5a623;
+}

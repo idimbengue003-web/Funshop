@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { useDakaStore, type Listing } from '@/lib/store'
 import { CategoryGrid } from './CategoryGrid'
 import { ListingRow } from './ListingRow'
-import { Crown, Flame } from 'lucide-react'
+import { Crown, Flame, TrendingUp } from 'lucide-react'
 
 export function HomeView() {
   const { searchQuery, setViewState } = useDakaStore()
@@ -23,7 +23,7 @@ export function HomeView() {
         return
       }
       const data = await res.json()
-      setPremiumListings((data.listings || []).slice(0, 8))
+      setPremiumListings((data.listings || []).slice(0, 10))
     } catch (error: unknown) {
       if (error instanceof DOMException && error.name === 'AbortError') return
       setPremiumListings([])
@@ -38,28 +38,26 @@ export function HomeView() {
   }, [])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Search results message */}
       {searchQuery && (
-        <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800">
+        <div className="p-3 rounded bg-amber-50 border border-amber-200 text-sm text-amber-800">
           Recherche de &laquo;&nbsp;{searchQuery}&nbsp;&raquo; &mdash; S&eacute;lectionnez une cat&eacute;gorie pour voir les r&eacute;sultats
         </div>
       )}
 
-      {/* Categories FIRST */}
-      <section>
-        <CategoryGrid />
-      </section>
+      {/* Categories - FunPay style grid */}
+      <CategoryGrid />
 
-      {/* VIP/Premium offers AFTER categories - FunPay "promo" style */}
+      {/* VIP/Premium offers - FunPay "promo" style */}
       {premiumListings.length > 0 && (
         <section>
-          <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border">
-            <Flame className="w-4 h-4 text-[#f5a623]" />
-            <h2 className="text-sm font-bold uppercase tracking-wide">Offres VIP</h2>
-            <Crown className="w-4 h-4 text-[#f5a623]" />
+          <div className="flex items-center gap-2 mb-2">
+            <Flame className="w-3.5 h-3.5 text-[#f5a623]" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Offres VIP</h2>
+            <Crown className="w-3.5 h-3.5 text-[#f5a623]" />
           </div>
-          <div className="bg-white rounded-lg border border-border overflow-hidden">
+          <div className="bg-white rounded border border-border overflow-hidden">
             {premiumListings.map((listing, index) => (
               <ListingRow
                 key={listing.id}
@@ -70,6 +68,11 @@ export function HomeView() {
           </div>
         </section>
       )}
+
+      {/* Footer info */}
+      <div className="text-center py-4 text-xs text-muted-foreground">
+        FUNSHOP &mdash; Comparez les prix alimentaires &agrave; Dakar
+      </div>
     </div>
   )
 }

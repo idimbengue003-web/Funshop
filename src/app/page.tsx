@@ -85,7 +85,7 @@ export default function Home() {
           <div className="w-12 h-12 rounded-xl bg-[#f5a623] flex items-center justify-center mx-auto mb-4 animate-pulse">
             <ShoppingCart className="w-6 h-6 text-black" />
           </div>
-          <p className="text-gray-400">Chargement de FUNSHOP...</p>
+          <p className="text-gray-400 text-sm">Chargement de FUNSHOP...</p>
         </div>
       </div>
     )
@@ -95,11 +95,11 @@ export default function Home() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#2a2d35]">
         <div className="text-center max-w-md mx-auto px-4">
-          <div className="w-20 h-20 rounded-2xl bg-[#f5a623] flex items-center justify-center mx-auto mb-6">
-            <ShoppingCart className="w-10 h-10 text-black" />
+          <div className="w-16 h-16 rounded-2xl bg-[#f5a623] flex items-center justify-center mx-auto mb-6">
+            <ShoppingCart className="w-8 h-8 text-black" />
           </div>
-          <h1 className="text-2xl font-extrabold mb-2 text-white">Bienvenue sur FUNSHOP</h1>
-          <p className="text-gray-400 mb-6">
+          <h1 className="text-xl font-extrabold mb-2 text-white">Bienvenue sur FUNSHOP</h1>
+          <p className="text-gray-400 text-sm mb-6">
             La marketplace alimentaire de Dakar. Comparez les prix entre vendeurs de tous les quartiers.
           </p>
           <Button
@@ -111,12 +111,12 @@ export default function Home() {
             {seeding ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Chargement des donn&eacute;es...
+                Chargement...
               </>
             ) : (
               <>
                 <Database className="w-4 h-4 mr-2" />
-                Charger les donn&eacute;es de d&eacute;monstration
+                Charger les donn&eacute;es
               </>
             )}
           </Button>
@@ -129,14 +129,14 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
       <Header />
 
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-4">
+      <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-4">
         {viewState.view === 'home' && <HomeView />}
         {viewState.view === 'category' && <CategoryView slug={viewState.slug} />}
         {viewState.view === 'seller' && <SellerView sellerId={viewState.id} />}
       </main>
 
       <footer className="bg-[#2a2d35] mt-auto">
-        <div className="max-w-5xl mx-auto px-4 py-3 text-center text-xs text-gray-400">
+        <div className="max-w-6xl mx-auto px-4 py-2.5 text-center text-[11px] text-gray-500">
           FUNSHOP &mdash; La marketplace alimentaire de Dakar &copy; 2025
         </div>
       </footer>
