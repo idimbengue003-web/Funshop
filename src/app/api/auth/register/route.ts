@@ -23,7 +23,12 @@ export async function POST(request: Request) {
       id: seller.id,
       name: seller.name,
       phone: seller.phone,
-      quartier: seller.quartier
+      quartier: seller.quartier,
+      avatar: seller.avatar,
+      rating: seller.rating,
+      sales: seller.sales,
+      premium: seller.premium,
+      premiumExpiry: seller.premiumExpiry
     })
 
     response.cookies.set('seller_id', seller.id, {

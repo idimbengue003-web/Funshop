@@ -11,8 +11,9 @@ model Seller {
   id          String     @id @default(cuid())
   name        String
   phone       String     @unique
-  password    String
-  quartier    String
+  password    String     @default("")
+  googleId    String?    @unique
+  quartier    String     @default("Dakar")
   avatar      String?
   rating      Float      @default(0)
   sales       Int        @default(0)

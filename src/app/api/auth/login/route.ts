@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     }
 
     const seller = await db.seller.findFirst({ where: { phone } })
-    if (!seller || seller.password !== password) {
+    if (!seller || (seller.password && seller.password !== password)) {
       return NextResponse.json({ error: 'Identifiants incorrects' }, { status: 401 })
     }
 
