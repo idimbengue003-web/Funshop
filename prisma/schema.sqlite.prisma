@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -16,7 +16,7 @@ model Seller {
   avatar      String?
   rating      Float      @default(0)
   sales       Int        @default(0)
-  premium     String     @default("none") // none, basic (1000), pro (5000)
+  premium     String     @default("none")
   premiumExpiry DateTime?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt

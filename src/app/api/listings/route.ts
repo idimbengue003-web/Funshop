@@ -8,8 +8,13 @@ export async function GET(request: Request) {
     const quartier = searchParams.get('quartier')
     const search = searchParams.get('search')
     const sort = searchParams.get('sort') || 'recent'
+    const premiumOnly = searchParams.get('premium') === 'true'
 
     const where: Record<string, unknown> = { available: true }
+
+    if (premiumOnly) {
+      where.isPremium = true
+    }
 
     if (categorySlug) {
       const category = await db.category.findFirst({ where: { slug: categorySlug } })
@@ -21,7 +26,10 @@ export async function GET(request: Request) {
     }
 
     if (search) {
-      where.title = { contains: search }
+      const isPostgres = process.env.DATABASE_URL?.startsWith('postgres')
+      where.title = isPostgres
+        ? { contains: search, mode: 'insensitive' as const }
+        : { contains: search }
     }
 
     const orderBy: Record<string, string> =
@@ -29,7 +37,22 @@ export async function GET(request: Request) {
       sort === 'price_desc' ? { price: 'desc' } :
       { createdAt: 'desc' }
 
-    // Get premium listings first
+    if (premiumOnly) {
+      // Simple query for premium listings on homepage
+      const listings = await db.listing.findMany({
+        where,
+        include: {
+          seller: { select: { id: true, name: true, phone: true, quartier: true, avatar: true, rating: true, sales: true, premium: true } },
+          category: { select: { id: true, name: true, slug: true, icon: true, color: true } }
+        },
+        orderBy,
+        take: 20
+      })
+
+      return NextResponse.json({ listings, stats: null, quartiers: [] })
+    }
+
+    // Full query for category view
     const premiumListings = await db.listing.findMany({
       where: { ...where, isPremium: true },
       include: {
@@ -52,7 +75,6 @@ export async function GET(request: Request) {
 
     const listings = [...premiumListings, ...regularListings]
 
-    // Get price stats for the current filters
     const priceStats = await db.listing.aggregate({
       where,
       _min: { price: true },
@@ -61,7 +83,6 @@ export async function GET(request: Request) {
       _count: true
     })
 
-    // Get quartier breakdown
     const quartierBreakdown = await db.listing.groupBy({
       by: ['quartier'],
       where,
@@ -83,6 +104,10 @@ export async function GET(request: Request) {
     })
   } catch (error) {
     console.error('Listings error:', error)
-    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
+    return NextResponse.json({
+      listings: [],
+      stats: { min: null, max: null, avg: null, total: 0 },
+      quartiers: []
+    })
   }
 }

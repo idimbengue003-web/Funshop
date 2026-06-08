@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useDakaStore, type Category } from '@/lib/store'
+import { useDakaStore } from '@/lib/store'
 import { Header } from '@/components/daka/Header'
 import { AuthModals } from '@/components/daka/AuthModals'
 import { CreateListingModal } from '@/components/daka/CreateListingModal'
@@ -13,13 +13,18 @@ import { HomeView } from '@/components/daka/HomeView'
 import { CategoryView } from '@/components/daka/CategoryView'
 import { SellerView } from '@/components/daka/SellerView'
 import { Button } from '@/components/ui/button'
-import { Database, Loader2 } from 'lucide-react'
+import { Database, Loader2, ShoppingCart } from 'lucide-react'
 
 export default function Home() {
   const { viewState, categories, setCategories, setSeller } = useDakaStore()
   const [initialized, setInitialized] = useState(false)
   const [seeding, setSeeding] = useState(false)
   const [needsSeed, setNeedsSeed] = useState(false)
+
+  // Scroll to top when view changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [viewState])
 
   useEffect(() => {
     initialize()
@@ -28,6 +33,7 @@ export default function Home() {
   const initialize = async () => {
     try {
       const catsRes = await fetch('/api/categories')
+      if (!catsRes.ok) throw new Error('API error')
       const catsData = await catsRes.json()
       setCategories(catsData)
 
@@ -48,6 +54,7 @@ export default function Home() {
       setInitialized(true)
     } catch (error) {
       console.error('Initialization failed:', error)
+      setNeedsSeed(true)
       setInitialized(true)
     }
   }
@@ -73,12 +80,12 @@ export default function Home() {
 
   if (!initialized) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[#2a2d35]">
         <div className="text-center">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center mx-auto mb-4 animate-pulse">
-            <span className="text-2xl">🛒</span>
+          <div className="w-12 h-12 rounded-xl bg-[#f5a623] flex items-center justify-center mx-auto mb-4 animate-pulse">
+            <ShoppingCart className="w-6 h-6 text-black" />
           </div>
-          <p className="text-muted-foreground">Chargement de DakaMarket...</p>
+          <p className="text-gray-400">Chargement de FUNSHOP...</p>
         </div>
       </div>
     )
@@ -86,30 +93,30 @@ export default function Home() {
 
   if (needsSeed) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-red-50">
+      <div className="min-h-screen flex items-center justify-center bg-[#2a2d35]">
         <div className="text-center max-w-md mx-auto px-4">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-orange-500/20">
-            <span className="text-4xl">🛒</span>
+          <div className="w-20 h-20 rounded-2xl bg-[#f5a623] flex items-center justify-center mx-auto mb-6">
+            <ShoppingCart className="w-10 h-10 text-black" />
           </div>
-          <h1 className="text-2xl font-extrabold mb-2">Bienvenue sur DakaMarket</h1>
-          <p className="text-muted-foreground mb-6">
+          <h1 className="text-2xl font-extrabold mb-2 text-white">Bienvenue sur FUNSHOP</h1>
+          <p className="text-gray-400 mb-6">
             La marketplace alimentaire de Dakar. Comparez les prix entre vendeurs de tous les quartiers.
           </p>
           <Button
             size="lg"
-            className="bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-xl shadow-orange-500/20"
+            className="bg-[#f5a623] hover:bg-[#e09520] text-black font-bold"
             onClick={handleSeed}
             disabled={seeding}
           >
             {seeding ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Chargement des données...
+                Chargement des donn&eacute;es...
               </>
             ) : (
               <>
                 <Database className="w-4 h-4 mr-2" />
-                Charger les données de démonstration
+                Charger les donn&eacute;es de d&eacute;monstration
               </>
             )}
           </Button>
@@ -119,18 +126,18 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
       <Header />
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-4">
+      <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-4">
         {viewState.view === 'home' && <HomeView />}
         {viewState.view === 'category' && <CategoryView slug={viewState.slug} />}
         {viewState.view === 'seller' && <SellerView sellerId={viewState.id} />}
       </main>
 
-      <footer className="border-t bg-muted/30 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 py-4 text-center text-xs text-muted-foreground">
-          DakaMarket — La marketplace alimentaire de Dakar &copy; 2025
+      <footer className="bg-[#2a2d35] mt-auto">
+        <div className="max-w-5xl mx-auto px-4 py-3 text-center text-xs text-gray-400">
+          FUNSHOP &mdash; La marketplace alimentaire de Dakar &copy; 2025
         </div>
       </footer>
 

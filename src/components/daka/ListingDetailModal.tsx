@@ -6,12 +6,11 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
-import { useDakaStore, type Listing, type Seller } from '@/lib/store'
+import { useDakaStore, type Listing } from '@/lib/store'
 import { getStarsFromSales, getPremiumLabel } from '@/lib/constants'
 import { toast } from '@/hooks/use-toast'
 import {
-  MapPin, Star, ShoppingBag, Phone, Eye, TrendingDown,
-  TrendingUp, Minus, Crown, Shield, MessageCircle
+  MapPin, Star, ShoppingBag, Phone, Crown, Shield, MessageCircle
 } from 'lucide-react'
 
 export function ListingDetailModal() {
@@ -35,13 +34,12 @@ export function ListingDetailModal() {
     setLoading(true)
     try {
       const res = await fetch(`/api/listings/detail?id=${listingId}`)
+      if (!res.ok) { setListing(null); return }
       const data = await res.json()
+      if (data.error) { setListing(null); return }
       setListing(data)
-    } catch {
-      console.error('Failed to load listing')
-    } finally {
-      setLoading(false)
-    }
+    } catch { setListing(null) }
+    finally { setLoading(false) }
   }
 
   const handleBuy = async () => {
@@ -51,20 +49,15 @@ export function ListingDetailModal() {
       const res = await fetch('/api/purchases', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ listingId: listing.id, buyerPhone: 'Client DakaMarket' })
+        body: JSON.stringify({ listingId: listing.id, buyerPhone: 'Client FUNSHOP' })
       })
       if (res.ok) {
         setPhoneRevealed(true)
-        toast({
-          title: 'Achat effectué !',
-          description: `Vous pouvez maintenant contacter ${listing.seller.name}`
-        })
+        toast({ title: 'Achat effectu&eacute; !', description: `Vous pouvez contacter ${listing.seller.name}` })
       }
     } catch {
       toast({ title: 'Erreur', description: 'Erreur lors de l\'achat', variant: 'destructive' })
-    } finally {
-      setPurchasing(false)
-    }
+    } finally { setPurchasing(false) }
   }
 
   const handleViewSeller = () => {
@@ -76,11 +69,6 @@ export function ListingDetailModal() {
   const stars = listing ? getStarsFromSales(listing.seller.sales) : 0
   const premiumInfo = listing ? getPremiumLabel(listing.seller.premium) : null
 
-  const formatPhone = (phone: string, reveal: boolean) => {
-    if (reveal) return phone
-    return phone.slice(0, 4) + ' ** ** ' + phone.slice(-2)
-  }
-
   return (
     <Dialog open={modal.type === 'listingDetail'} onOpenChange={() => closeModal()}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
@@ -89,26 +77,20 @@ export function ListingDetailModal() {
         ) : listing ? (
           <>
             <DialogHeader>
-              <div className="flex items-start gap-3">
+              <div className="flex items-center gap-3">
                 <div
-                  className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl shrink-0"
-                  style={{ backgroundColor: `${listing.category.color}15` }}
+                  className="w-10 h-10 rounded-lg flex items-center justify-center text-xl shrink-0"
+                  style={{ backgroundColor: `${listing.category.color}12` }}
                 >
                   {listing.category.icon}
                 </div>
                 <div className="flex-1">
-                  <DialogTitle className="text-lg leading-tight">{listing.title}</DialogTitle>
+                  <DialogTitle className="text-base leading-tight">{listing.title}</DialogTitle>
                   <div className="flex items-center gap-2 mt-1">
-                    <Badge variant="secondary" className="text-xs" style={{
-                      backgroundColor: `${listing.category.color}15`,
-                      color: listing.category.color
-                    }}>
-                      {listing.category.name}
-                    </Badge>
+                    <Badge variant="secondary" className="text-[10px]">{listing.category.name}</Badge>
                     {listing.isPremium && (
-                      <Badge className="bg-amber-100 text-amber-700 border-amber-200 text-xs">
-                        <Crown className="w-3 h-3 mr-0.5" />
-                        Premium
+                      <Badge className="bg-[#f5a623]/10 text-[#f5a623] border-[#f5a623]/20 text-[10px]">
+                        <Crown className="w-2.5 h-2.5 mr-0.5" /> VIP
                       </Badge>
                     )}
                   </div>
@@ -116,141 +98,98 @@ export function ListingDetailModal() {
               </div>
             </DialogHeader>
 
-            {/* Price */}
+            {/* Price - prominent */}
             <div className="mt-2">
-              <div className="flex items-end gap-2">
-                <span className="text-3xl font-extrabold text-orange-600">
-                  {listing.price.toLocaleString('fr-FR')}
-                </span>
-                <span className="text-sm text-muted-foreground mb-1">FCFA / {listing.unit}</span>
-              </div>
+              <span className="text-2xl font-extrabold">{listing.price.toLocaleString('fr-FR')}</span>
+              <span className="text-sm text-muted-foreground ml-1">FCFA / {listing.unit}</span>
             </div>
 
             {/* Description */}
             {listing.description && (
-              <p className="text-sm text-muted-foreground mt-2">{listing.description}</p>
+              <p className="text-sm text-muted-foreground">{listing.description}</p>
             )}
 
-            <Separator className="my-3" />
+            <Separator />
 
-            {/* Seller info */}
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/50">
-              <Avatar className="w-12 h-12">
-                <AvatarFallback className="bg-orange-100 text-orange-700 font-bold">
+            {/* Seller info - compact */}
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+              <Avatar className="w-10 h-10">
+                <AvatarFallback className="bg-[#f5a623] text-black text-sm font-bold">
                   {listing.seller.name.split(' ').map(n => n[0]).join('')}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={handleViewSeller}
-                    className="font-semibold text-sm hover:text-orange-600 transition-colors"
-                  >
+                  <button onClick={handleViewSeller} className="font-medium text-sm hover:text-[#f5a623]">
                     {listing.seller.name}
                   </button>
                   {premiumInfo && (
-                    <Badge className="text-[10px] px-1.5 py-0" style={{
-                      backgroundColor: `${premiumInfo.color}15`,
-                      color: premiumInfo.color,
-                      borderColor: `${premiumInfo.color}30`
-                    }}>
+                    <span className="text-[9px] font-bold" style={{ color: premiumInfo.color }}>
                       {premiumInfo.label}
-                    </Badge>
+                    </span>
                   )}
                 </div>
-                <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <MapPin className="w-3 h-3 text-orange-500" />
-                    {listing.quartier}
-                  </span>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                  <span className="flex items-center gap-0.5"><MapPin className="w-3 h-3" /> {listing.quartier}</span>
                   <span className="flex items-center gap-0.5">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-3 h-3 ${i < Math.floor(stars) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-                      />
+                      <Star key={i} className={`w-2.5 h-2.5 ${i < Math.floor(stars) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
                     ))}
-                    <span className="ml-1">({listing.seller.sales} ventes)</span>
+                    <span className="ml-0.5">({listing.seller.sales})</span>
                   </span>
                 </div>
               </div>
-              <Button variant="outline" size="sm" onClick={handleViewSeller}>
-                Voir profil
-              </Button>
+              <Button variant="outline" size="sm" onClick={handleViewSeller}>Profil</Button>
             </div>
 
-            <Separator className="my-3" />
+            <Separator />
 
-            {/* Phone number - blurred */}
-            <div className="space-y-3">
+            {/* Phone number */}
+            <div className="space-y-2">
               <h3 className="font-semibold text-sm flex items-center gap-2">
-                <Phone className="w-4 h-4" />
-                Contacter le vendeur
+                <Phone className="w-4 h-4" /> Contacter
               </h3>
-
               {phoneRevealed ? (
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-green-50 border border-green-200">
-                  <Phone className="w-5 h-5 text-green-600" />
-                  <span className="font-bold text-lg text-green-700">{listing.seller.phone}</span>
-                  <a
-                    href={`tel:${listing.seller.phone}`}
-                    className="ml-auto"
-                  >
-                    <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white">
-                      <Phone className="w-3 h-3 mr-1" />
-                      Appeler
+                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-green-50 border border-green-200">
+                  <Phone className="w-4 h-4 text-green-600" />
+                  <span className="font-bold text-green-700">{listing.seller.phone}</span>
+                  <a href={`tel:${listing.seller.phone}`} className="ml-auto">
+                    <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white h-7 text-xs">
+                      <Phone className="w-3 h-3 mr-1" /> Appeler
                     </Button>
                   </a>
                 </div>
               ) : (
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/50 border border-border">
-                  <Phone className="w-5 h-5 text-muted-foreground" />
-                  <span className="font-mono text-lg tracking-wider text-muted-foreground blur-sm select-none">
-                    {listing.seller.phone}
-                  </span>
-                  <Badge variant="outline" className="ml-auto text-xs">
-                    <Shield className="w-3 h-3 mr-1" />
-                    Protégé
-                  </Badge>
+                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-muted/50 border border-border">
+                  <Phone className="w-4 h-4 text-muted-foreground" />
+                  <span className="font-mono text-muted-foreground blur-sm select-none">{listing.seller.phone}</span>
+                  <Badge variant="outline" className="ml-auto text-[10px]"><Shield className="w-3 h-3 mr-0.5" /> Prot&eacute;g&eacute;</Badge>
                 </div>
               )}
             </div>
 
-            {/* Action buttons */}
-            <div className="flex gap-2 mt-2">
+            {/* Actions */}
+            <div className="flex gap-2 mt-1">
               {!phoneRevealed ? (
                 <Button
-                  className="flex-1 bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg shadow-orange-500/20"
+                  className="flex-1 bg-[#f5a623] hover:bg-[#e09520] text-black font-bold"
                   size="lg"
                   onClick={handleBuy}
                   disabled={purchasing}
                 >
                   <ShoppingBag className="w-4 h-4 mr-2" />
-                  {purchasing ? 'Traitement...' : 'Acheter - Voir le numéro'}
+                  {purchasing ? 'Traitement...' : 'Acheter - Voir le num&eacute;ro'}
                 </Button>
               ) : (
                 <>
                   <a href={`tel:${listing.seller.phone}`} className="flex-1">
-                    <Button
-                      className="w-full bg-green-600 hover:bg-green-700 text-white"
-                      size="lg"
-                    >
-                      <Phone className="w-4 h-4 mr-2" />
-                      Appeler
+                    <Button className="w-full bg-green-600 hover:bg-green-700 text-white" size="lg">
+                      <Phone className="w-4 h-4 mr-2" /> Appeler
                     </Button>
                   </a>
-                  <a
-                    href={`https://wa.me/221${listing.seller.phone}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1"
-                  >
-                    <Button
-                      className="w-full bg-emerald-500 hover:bg-emerald-600 text-white"
-                      size="lg"
-                    >
-                      <MessageCircle className="w-4 h-4 mr-2" />
-                      WhatsApp
+                  <a href={`https://wa.me/221${listing.seller.phone}`} target="_blank" rel="noopener noreferrer" className="flex-1">
+                    <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white" size="lg">
+                      <MessageCircle className="w-4 h-4 mr-2" /> WhatsApp
                     </Button>
                   </a>
                 </>
@@ -258,7 +197,7 @@ export function ListingDetailModal() {
             </div>
           </>
         ) : (
-          <div className="py-12 text-center text-muted-foreground">Annonce non trouvée</div>
+          <div className="py-12 text-center text-muted-foreground">Annonce non trouv&eacute;e</div>
         )}
       </DialogContent>
     </Dialog>

@@ -4,11 +4,9 @@ import { useEffect, useState } from 'react'
 import { useDakaStore, type Category } from '@/lib/store'
 import { getStarsFromSales, getPremiumLabel } from '@/lib/constants'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, MapPin, Star, Package, Phone, Crown, ShoppingBag } from 'lucide-react'
-import { motion } from 'framer-motion'
 
 interface SellerListing {
   id: string
@@ -51,22 +49,21 @@ export function SellerView({ sellerId }: SellerViewProps) {
     setLoading(true)
     try {
       const res = await fetch(`/api/sellers?id=${sellerId}`)
+      if (!res.ok) { setSeller(null); return }
       const data = await res.json()
+      if (data.error) { setSeller(null); return }
       setSeller(data)
-    } catch (error) {
-      console.error('Failed to load seller:', error)
-    } finally {
-      setLoading(false)
-    }
+    } catch { setSeller(null) }
+    finally { setLoading(false) }
   }
 
   if (loading) {
     return (
-      <div className="space-y-4">
-        <div className="h-8 w-32 bg-muted rounded animate-pulse" />
-        <div className="h-24 bg-muted rounded-xl animate-pulse" />
+      <div className="space-y-3">
+        <div className="h-6 w-24 bg-muted rounded animate-pulse" />
+        <div className="h-20 bg-muted rounded-lg animate-pulse" />
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-20 bg-muted rounded-xl animate-pulse" />
+          <div key={i} className="h-12 bg-muted rounded animate-pulse" />
         ))}
       </div>
     )
@@ -75,10 +72,8 @@ export function SellerView({ sellerId }: SellerViewProps) {
   if (!seller) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">Vendeur non trouvé</p>
-        <Button variant="outline" onClick={() => setViewState({ view: 'home' })} className="mt-4">
-          Retour
-        </Button>
+        <p className="text-muted-foreground">Vendeur non trouv&eacute;</p>
+        <Button variant="outline" onClick={() => setViewState({ view: 'home' })} className="mt-4">Retour</Button>
       </div>
     )
   }
@@ -88,110 +83,74 @@ export function SellerView({ sellerId }: SellerViewProps) {
 
   return (
     <div className="space-y-4">
-      {/* Back button */}
-      <Button variant="ghost" size="sm" onClick={() => setViewState({ view: 'home' })} className="gap-1">
-        <ArrowLeft className="w-4 h-4" /> Retour
-      </Button>
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-sm">
+        <button onClick={() => setViewState({ view: 'home' })} className="text-[#f5a623] hover:underline">Accueil</button>
+        <span className="text-muted-foreground">/</span>
+        <span className="font-medium">Vendeur</span>
+      </div>
 
-      {/* Seller profile card */}
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <Card className="overflow-hidden">
-          <div className={`h-20 ${
-            seller.premium === 'pro' ? 'bg-gradient-to-r from-amber-400 to-orange-500' :
-            seller.premium === 'basic' ? 'bg-gradient-to-r from-violet-400 to-purple-500' :
-            'bg-gradient-to-r from-orange-400 to-red-500'
-          }`} />
-          <CardContent className="relative pt-0 pb-4 px-4">
-            <div className="flex items-end gap-3 -mt-8 relative z-10">
-              <Avatar className="w-16 h-16 border-4 border-white">
-                <AvatarFallback className="bg-orange-100 text-orange-700 text-xl font-bold">
-                  {seller.name.split(' ').map(n => n[0]).join('')}
-                </AvatarFallback>
-              </Avatar>
-              <div className="pb-1">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-bold">{seller.name}</h2>
-                  {premiumInfo && (
-                    <Badge className="text-[10px] px-1.5 py-0" style={{
-                      backgroundColor: `${premiumInfo.color}15`,
-                      color: premiumInfo.color,
-                      borderColor: `${premiumInfo.color}30`
-                    }}>
-                      {seller.premium === 'pro' ? <Crown className="w-3 h-3 mr-0.5" /> : <Star className="w-3 h-3 mr-0.5" />}
-                      {premiumInfo.label}
-                    </Badge>
-                  )}
-                </div>
-              </div>
+      {/* Seller profile - compact FunPay style */}
+      <div className="bg-white rounded-lg border border-border p-4">
+        <div className="flex items-center gap-3">
+          <Avatar className="w-12 h-12">
+            <AvatarFallback className="bg-[#f5a623] text-black text-sm font-bold">
+              {seller.name.split(' ').map(n => n[0]).join('')}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-bold">{seller.name}</h2>
+              {premiumInfo && (
+                <Badge className="text-[9px] px-1.5 py-0 border-0" style={{
+                  backgroundColor: `${premiumInfo.color}15`,
+                  color: premiumInfo.color
+                }}>
+                  {premiumInfo.label}
+                </Badge>
+              )}
             </div>
-            <div className="flex flex-wrap items-center gap-3 mt-3 text-sm text-muted-foreground">
+            <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {seller.quartier}</span>
               <span className="flex items-center gap-1">
-                <MapPin className="w-4 h-4 text-orange-500" />
-                {seller.quartier}
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} className={`w-2.5 h-2.5 ${i < Math.floor(stars) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
+                ))}
+                <span className="ml-0.5">{seller.sales} ventes</span>
               </span>
-              <span className="flex items-center gap-1">
-                <Phone className="w-4 h-4" />
-                {seller.phone}
-              </span>
+              <span><Package className="w-3 h-3 inline mr-0.5" /> {seller.listings.length} annonces</span>
             </div>
-            <div className="flex gap-3 mt-3 flex-wrap">
-              {/* Stars based on sales */}
-              <Badge className="bg-yellow-100 text-yellow-700 border-yellow-200">
-                <div className="flex items-center gap-0.5 mr-1">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-3 h-3 ${i < Math.floor(stars) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-                    />
-                  ))}
-                </div>
-                {stars.toFixed(1)}
-              </Badge>
-              <Badge className="bg-green-100 text-green-700 border-green-200">
-                <ShoppingBag className="w-3 h-3 mr-1" />
-                {seller.sales} ventes
-              </Badge>
-              <Badge variant="secondary">
-                <Package className="w-3 h-3 mr-1" />
-                {seller.listings.length} annonce{seller.listings.length !== 1 ? 's' : ''}
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+          </div>
+        </div>
+      </div>
 
-      {/* Seller listings */}
-      <div className="space-y-2">
-        {seller.listings.map((listing) => (
-          <Card
+      {/* Seller listings - FunPay row style */}
+      <div className="bg-white rounded-lg border border-border overflow-hidden">
+        {seller.listings.map((listing, index) => (
+          <div
             key={listing.id}
-            className={`hover:shadow-md transition-shadow cursor-pointer ${
-              listing.isPremium ? 'ring-1 ring-amber-300/50 border-amber-200' : ''
-            }`}
+            className={`flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 ${index < seller.listings.length - 1 ? 'border-b border-border/50' : ''}`}
             onClick={() => openModal({ type: 'listingDetail', listingId: listing.id })}
           >
-            <CardContent className="p-4 flex items-center gap-3">
-              <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center text-lg shrink-0"
-                style={{ backgroundColor: `${listing.category.color}15` }}
-              >
-                {listing.category.icon}
+            <div
+              className="w-9 h-9 rounded-lg flex items-center justify-center text-lg shrink-0"
+              style={{ backgroundColor: `${listing.category.color}12` }}
+            >
+              {listing.category.icon}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className="font-medium text-sm truncate">{listing.title}</span>
+                {listing.isPremium && <Crown className="w-3 h-3 text-[#f5a623] shrink-0" />}
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <h3 className="font-semibold text-sm truncate">{listing.title}</h3>
-                  {listing.isPremium && <Crown className="w-3.5 h-3.5 text-amber-500 shrink-0" />}
-                </div>
-                <p className="text-xs text-muted-foreground">{listing.category.name} • {listing.quartier}</p>
-              </div>
-              <div className="text-right shrink-0">
-                <p className="font-bold text-orange-600">{listing.price.toLocaleString('fr-FR')}</p>
-                <p className="text-[10px] text-muted-foreground">FCFA / {listing.unit}</p>
-              </div>
-            </CardContent>
-          </Card>
+              <span className="text-xs text-muted-foreground">{listing.category.name} &bull; {listing.quartier}</span>
+            </div>
+            <div className="text-right shrink-0">
+              <span className="font-bold text-sm">{listing.price.toLocaleString('fr-FR')}</span>
+              <span className="text-[10px] text-muted-foreground ml-0.5">FCFA/{listing.unit}</span>
+            </div>
+          </div>
         ))}
-
         {seller.listings.length === 0 && (
           <div className="text-center py-8 text-muted-foreground">
             <Package className="w-10 h-10 mx-auto mb-2 opacity-30" />

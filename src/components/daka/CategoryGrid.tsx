@@ -1,8 +1,6 @@
 'use client'
 
 import { useDakaStore, type Category } from '@/lib/store'
-import { motion } from 'framer-motion'
-import { Package } from 'lucide-react'
 
 export function CategoryGrid() {
   const { categories, setViewState } = useDakaStore()
@@ -11,38 +9,33 @@ export function CategoryGrid() {
     setViewState({ view: 'category', slug })
   }
 
+  if (categories.length === 0) return null
+
   return (
-    <section className="py-8">
-      <div className="flex items-center gap-2 mb-6">
-        <Package className="w-5 h-5 text-orange-600" />
-        <h2 className="text-xl font-bold">Catégories</h2>
+    <div className="space-y-5">
+      {/* FunPay-style category chips - all in a flow layout */}
+      <div>
+        <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border">
+          <span className="text-sm font-bold uppercase tracking-wide">Cat&eacute;gories</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {categories.map((cat: Category) => (
+            <button
+              key={cat.id}
+              onClick={() => handleCategoryClick(cat.slug)}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white border border-border hover:border-[#f5a623] hover:bg-amber-50/50 text-sm font-medium"
+            >
+              <span className="text-base">{cat.icon}</span>
+              <span className="text-xs">{cat.name}</span>
+              {cat._count && cat._count.listings > 0 && (
+                <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0 rounded-full">
+                  {cat._count.listings}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-        {categories.map((cat: Category, index: number) => (
-          <motion.button
-            key={cat.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
-            onClick={() => handleCategoryClick(cat.slug)}
-            className="group relative flex flex-col items-center gap-2 p-4 rounded-2xl border border-border/50 bg-card hover:bg-muted/50 hover:shadow-lg hover:border-orange-200 transition-all duration-300"
-          >
-            <span className="text-3xl group-hover:scale-110 transition-transform duration-300">
-              {cat.icon}
-            </span>
-            <span className="text-sm font-semibold text-center leading-tight">{cat.name}</span>
-            {cat._count && (
-              <span className="text-xs text-muted-foreground">
-                {cat._count.listings} annonce{cat._count.listings !== 1 ? 's' : ''}
-              </span>
-            )}
-            <div
-              className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-5 transition-opacity"
-              style={{ backgroundColor: cat.color }}
-            />
-          </motion.button>
-        ))}
-      </div>
-    </section>
+    </div>
   )
 }

@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DakaMarket — Marché alimentaire de Dakar",
+  title: "FUNSHOP — Marché alimentaire de Dakar",
   description: "Comparez les prix des produits alimentaires entre les vendeurs de tous les quartiers de Dakar. Lait, viande, poisson, légumes, boissons et plus.",
-  keywords: ["Dakar", "marché", "alimentaire", "Sénégal", "prix", "comparer", "vendeur"],
+  keywords: ["Dakar", "marché", "alimentaire", "Sénégal", "prix", "comparer", "vendeur", "FUNSHOP"],
   icons: {
     icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
   },

@@ -6,13 +6,13 @@ export async function POST(request: Request) {
   try {
     const seller = await getCurrentSeller()
     if (!seller) {
-      return NextResponse.json({ error: 'Non connecté' }, { status: 401 })
+      return NextResponse.json({ error: 'Non connect&eacute;' }, { status: 401 })
     }
 
     const body = await request.json()
-    const { tier } = body // 'basic' or 'pro'
+    const { tier } = body // 'basic', 'pro', or 'vip'
 
-    if (!['basic', 'pro'].includes(tier)) {
+    if (!['basic', 'pro', 'vip'].includes(tier)) {
       return NextResponse.json({ error: 'Tier invalide' }, { status: 400 })
     }
 
@@ -23,10 +23,11 @@ export async function POST(request: Request) {
       data: { premium: tier, premiumExpiry }
     })
 
-    // Mark some listings as premium
+    // Mark listings as premium based on tier
+    const maxPremium = tier === 'vip' ? 100 : tier === 'pro' ? 20 : 5
     const listings = await db.listing.findMany({
       where: { sellerId: seller.id, available: true },
-      take: tier === 'pro' ? 10 : 5
+      take: maxPremium
     })
 
     for (const listing of listings) {

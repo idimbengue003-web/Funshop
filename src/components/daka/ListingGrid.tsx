@@ -4,7 +4,6 @@ import { useDakaStore, type Listing, type ListingStats, type QuartiBreakdown } f
 import { ListingCard } from './ListingCard'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { BarChart3, ArrowUpDown, Filter, TrendingDown, TrendingUp, Minus, X, Package } from 'lucide-react'
 import { QUARTIERS } from '@/lib/constants'
@@ -19,16 +18,6 @@ interface ListingGridProps {
 
 export function ListingGrid({ listings, stats, quartiers, loading, showFilters = true }: ListingGridProps) {
   const { sortBy, setSortBy, selectedQuartier, setSelectedQuartier } = useDakaStore()
-
-  if (loading) {
-    return (
-      <div className="space-y-3">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={i} className="h-24 rounded-xl" />
-        ))}
-      </div>
-    )
-  }
 
   return (
     <div className="space-y-4">
@@ -46,7 +35,7 @@ export function ListingGrid({ listings, stats, quartiers, loading, showFilters =
                   <span className="text-green-700 font-semibold">{stats.min?.toLocaleString('fr-FR')}</span>
                   <span className="text-muted-foreground text-xs">FCFA</span>
                 </span>
-                <span className="text-muted-foreground">→</span>
+                <span className="text-muted-foreground">&rarr;</span>
                 <span className="flex items-center gap-1">
                   <TrendingUp className="w-3 h-3 text-red-500" />
                   <span className="text-red-600 font-semibold">{stats.max?.toLocaleString('fr-FR')}</span>
@@ -78,9 +67,9 @@ export function ListingGrid({ listings, stats, quartiers, loading, showFilters =
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="recent">Plus récent</SelectItem>
+                <SelectItem value="recent">Plus r&eacute;cent</SelectItem>
                 <SelectItem value="price_asc">Prix croissant</SelectItem>
-                <SelectItem value="price_desc">Prix décroissant</SelectItem>
+                <SelectItem value="price_desc">Prix d&eacute;croissant</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -119,7 +108,7 @@ export function ListingGrid({ listings, stats, quartiers, loading, showFilters =
             <button
               key={q.quartier}
               onClick={() => setSelectedQuartier(q.quartier)}
-              className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+              className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                 selectedQuartier === q.quartier
                   ? 'bg-orange-100 text-orange-700 border-orange-300'
                   : 'bg-muted/50 text-muted-foreground border-border/50 hover:bg-muted'
@@ -138,25 +127,46 @@ export function ListingGrid({ listings, stats, quartiers, loading, showFilters =
         </div>
       )}
 
-      {/* Listings grid */}
-      {listings.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {listings.map((listing, index) => (
-            <ListingCard
-              key={listing.id}
-              listing={listing}
-              index={index}
-              stats={stats ?? undefined}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-12 text-muted-foreground">
-          <Package className="w-12 h-12 mx-auto mb-3 opacity-30" />
-          <p className="font-medium">Aucune annonce trouvée</p>
-          <p className="text-sm">Essayez de modifier vos filtres</p>
-        </div>
-      )}
+      {/* Listings grid - overlay skeletons instead of replacing content */}
+      <div className="relative">
+        {/* Loading overlay - fades in on top of existing content */}
+        {loading && listings.length > 0 && (
+          <div className="absolute inset-0 z-10 bg-background/60 backdrop-blur-[2px] flex items-start justify-center pt-4 transition-opacity">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-lg border text-sm text-muted-foreground">
+              <div className="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+              Chargement...
+            </div>
+          </div>
+        )}
+
+        {/* Initial loading state - no data yet */}
+        {loading && listings.length === 0 ? (
+          <div className="space-y-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} className="h-24 rounded-xl" />
+            ))}
+          </div>
+        ) : listings.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {listings.map((listing, index) => (
+              <ListingCard
+                key={listing.id}
+                listing={listing}
+                index={index}
+                stats={stats ?? undefined}
+              />
+            ))}
+          </div>
+        ) : (
+          !loading && (
+            <div className="text-center py-12 text-muted-foreground">
+              <Package className="w-12 h-12 mx-auto mb-3 opacity-30" />
+              <p className="font-medium">Aucune annonce trouv&eacute;e</p>
+              <p className="text-sm">Essayez de modifier vos filtres</p>
+            </div>
+          )
+        )}
+      </div>
     </div>
   )
 }

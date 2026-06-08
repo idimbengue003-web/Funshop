@@ -26,6 +26,7 @@ export function getStarsFromSales(sales: number): number {
 }
 
 export function getPremiumLabel(premium: string): { label: string; color: string } | null {
+  if (premium === 'vip') return { label: 'VIP', color: '#10B981' }
   if (premium === 'pro') return { label: 'PRO', color: '#F59E0B' }
   if (premium === 'basic') return { label: 'Premium', color: '#8B5CF6' }
   return null

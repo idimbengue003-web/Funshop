@@ -125,7 +125,7 @@ export function AuthModals() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">Créer un compte vendeur</DialogTitle>
-            <DialogDescription>Rejoignez DakaMarket et vendez vos produits</DialogDescription>
+            <DialogDescription>Rejoignez FUNSHOP et vendez vos produits</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">

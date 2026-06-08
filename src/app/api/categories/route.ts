@@ -10,7 +10,8 @@ export async function GET() {
       orderBy: { name: 'asc' }
     })
     return NextResponse.json(categories)
-  } catch {
-    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
+  } catch (error) {
+    console.error('Categories error:', error)
+    return NextResponse.json([])
   }
 }

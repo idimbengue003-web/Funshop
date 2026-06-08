@@ -62,6 +62,12 @@ const CATEGORIES = [
   { name: 'Produits bébé', slug: 'bebe', icon: '🍼', color: '#F472B6' },
   { name: 'Hygiène & Entretien', slug: 'hygiene', icon: '🧴', color: '#6366F1' },
   { name: 'Surgelés', slug: 'surgelés', icon: '❄️', color: '#38BDF8' },
+
+  // Plats préparés & Traiteur
+  { name: 'Plats cuisinés', slug: 'plats-cuisines', icon: '🍲', color: '#D97706' },
+  { name: 'Sandwichs & Burgers', slug: 'sandwichs', icon: '🥪', color: '#F59E0B' },
+  { name: 'Grillades & Dibi', slug: 'grillades', icon: '🔥', color: '#DC2626' },
+  { name: 'Glaces & Desserts', slug: 'glaces-desserts', icon: '🍦', color: '#F472B6' },
 ]
 
 const SELLERS = [
@@ -72,13 +78,13 @@ const SELLERS = [
   { name: 'Ousmane Fall', phone: '775678901', password: 'pass123', quartier: 'Ouakam', rating: 4.0, sales: 90, premium: 'none' },
   { name: 'Mariama Diallo', phone: '776789012', password: 'pass123', quartier: 'Mermoz', rating: 4.6, sales: 350, premium: 'basic' },
   { name: 'Moussa Sy', phone: '777890123', password: 'pass123', quartier: 'Point E', rating: 4.3, sales: 200, premium: 'none' },
-  { name: 'Khady Wade', phone: '778901234', password: 'pass123', quartier: 'Fann', rating: 4.9, sales: 620, premium: 'pro' },
+  { name: 'Khady Wade', phone: '778901234', password: 'pass123', quartier: 'Fann', rating: 4.9, sales: 620, premium: 'vip' },
   { name: 'Amadou Mbaye', phone: '779012345', password: 'pass123', quartier: 'Almadies', rating: 4.1, sales: 110, premium: 'none' },
   { name: 'Aminata Gueye', phone: '770123456', password: 'pass123', quartier: 'Sacré-Cœur', rating: 4.4, sales: 260, premium: 'basic' },
   { name: 'Cheikh Seck', phone: '781234567', password: 'pass123', quartier: 'Ngor', rating: 4.6, sales: 290, premium: 'pro' },
   { name: 'Diodio Sarr', phone: '782345678', password: 'pass123', quartier: 'Dieuppeul', rating: 4.3, sales: 170, premium: 'none' },
   { name: 'Pape Thiam', phone: '783456789', password: 'pass123', quartier: 'Grand Dakar', rating: 4.5, sales: 310, premium: 'basic' },
-  { name: 'Ndeye Mbaye', phone: '784567890', password: 'pass123', quartier: 'HLM', rating: 4.7, sales: 450, premium: 'pro' },
+  { name: 'Ndeye Mbaye', phone: '784567890', password: 'pass123', quartier: 'HLM', rating: 4.7, sales: 450, premium: 'vip' },
   { name: 'Saliou Camara', phone: '785678901', password: 'pass123', quartier: 'Biscuiterie', rating: 4.2, sales: 130, premium: 'none' },
   { name: 'Awa Niang', phone: '786789012', password: 'pass123', quartier: 'Liberté', rating: 4.5, sales: 270, premium: 'basic' },
   { name: 'Boubacar Diouf', phone: '787890123', password: 'pass123', quartier: 'Yoff', rating: 3.9, sales: 60, premium: 'none' },
@@ -407,6 +413,48 @@ const LISTINGS_DATA: { title: string; price: number; unit: string; categorySlug:
   { title: 'Poisson congelé', price: 2000, unit: 'kg', categorySlug: 'surgelés' },
   { title: 'Légumes surgelés', price: 1500, unit: 'sachet', categorySlug: 'surgelés' },
   { title: 'Frites surgelées', price: 2000, unit: 'sachet 1kg', categorySlug: 'surgelés' },
+
+  // ====== PLATS CUISINÉS ======
+  { title: 'Thieboudienne (poisson)', price: 2000, unit: 'portion', categorySlug: 'plats-cuisines' },
+  { title: 'Thieboudienne (viande)', price: 2500, unit: 'portion', categorySlug: 'plats-cuisines' },
+  { title: 'Yassa poulet', price: 2500, unit: 'portion', categorySlug: 'plats-cuisines' },
+  { title: 'Yassa poisson', price: 2000, unit: 'portion', categorySlug: 'plats-cuisines' },
+  { title: 'Maafe (sauce arachide)', price: 2000, unit: 'portion', categorySlug: 'plats-cuisines' },
+  { title: 'Soupou kandia', price: 2000, unit: 'portion', categorySlug: 'plats-cuisines' },
+  { title: 'Ceebu jën (thieb poisson)', price: 2000, unit: 'portion', categorySlug: 'plats-cuisines' },
+  { title: 'Thiou au poisson', price: 1800, unit: 'portion', categorySlug: 'plats-cuisines' },
+  { title: 'Domada', price: 2000, unit: 'portion', categorySlug: 'plats-cuisines' },
+  { title: 'Couscous viande', price: 2500, unit: 'portion', categorySlug: 'plats-cuisines' },
+  { title: 'Riz au gras', price: 1500, unit: 'portion', categorySlug: 'plats-cuisines' },
+
+  // ====== SANDWICHS & BURGERS ======
+  { title: 'Burger classique', price: 1500, unit: 'pièce', categorySlug: 'sandwichs' },
+  { title: 'Burger double', price: 2500, unit: 'pièce', categorySlug: 'sandwichs' },
+  { title: 'Sandwich poulet', price: 1200, unit: 'pièce', categorySlug: 'sandwichs' },
+  { title: 'Sandwich thon', price: 1000, unit: 'pièce', categorySlug: 'sandwichs' },
+  { title: 'Panini', price: 1500, unit: 'pièce', categorySlug: 'sandwichs' },
+  { title: 'Shawarma', price: 1500, unit: 'pièce', categorySlug: 'sandwichs' },
+  { title: 'Wrap poulet', price: 1300, unit: 'pièce', categorySlug: 'sandwichs' },
+
+  // ====== GRILLADES & DIBI ======
+  { title: 'Dibi mouton', price: 3000, unit: 'portion', categorySlug: 'grillades' },
+  { title: 'Dibi poulet', price: 2000, unit: 'portion', categorySlug: 'grillades' },
+  { title: 'Brochettes bœuf', price: 1500, unit: 'portion', categorySlug: 'grillades' },
+  { title: 'Brochettes poulet', price: 1200, unit: 'portion', categorySlug: 'grillades' },
+  { title: 'Brochettes merguez', price: 1500, unit: 'portion', categorySlug: 'grillades' },
+  { title: 'Poulet braisé entier', price: 4000, unit: 'pièce', categorySlug: 'grillades' },
+  { title: 'Tilapia grillé', price: 3000, unit: 'pièce', categorySlug: 'grillades' },
+  { title: 'Côtelettes grillées', price: 3500, unit: 'portion', categorySlug: 'grillades' },
+
+  // ====== GLACES & DESSERTS ======
+  { title: 'Glace vanille', price: 500, unit: 'cornet', categorySlug: 'glaces-desserts' },
+  { title: 'Glace chocolat', price: 500, unit: 'cornet', categorySlug: 'glaces-desserts' },
+  { title: 'Glace coco', price: 400, unit: 'cornet', categorySlug: 'glaces-desserts' },
+  { title: 'Sorbet bissap', price: 300, unit: 'cornet', categorySlug: 'glaces-desserts' },
+  { title: 'Thiakry (dessert mil)', price: 500, unit: 'bol', categorySlug: 'glaces-desserts' },
+  { title: 'Fondant chocolat', price: 1000, unit: 'pièce', categorySlug: 'glaces-desserts' },
+  { title: 'Tarte aux fruits', price: 800, unit: 'part', categorySlug: 'glaces-desserts' },
+  { title: 'Crème brûlée', price: 1000, unit: 'pièce', categorySlug: 'glaces-desserts' },
 ]
 
 export async function POST() {
